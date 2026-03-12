@@ -119,6 +119,7 @@ def process_video_task(
                 )
 
             logger.info(f"[{video_id}] Processing video with ffmpeg")
+            temp_output_filepath = output_filepath + ".tmp"
             cmd = [
                 "ffmpeg", "-y",
                 "-i", video_path,
@@ -129,9 +130,11 @@ def process_video_task(
                 "-c:v", "libx264",   # export h264
                 "-c:a", "aac",       # export aac
                 "-shortest",         # ensure output stops when shortest stream stops
-                output_filepath
+                temp_output_filepath
             ]
             run_command(cmd)
+            
+            os.rename(temp_output_filepath, output_filepath)
             
             logger.info(f"[{video_id}] Finished successfully. Output: {output_filepath}")
             return {
