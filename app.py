@@ -22,7 +22,7 @@ def run_cleanup():
     try:
         now = time.time()
         for filename in os.listdir("/outputs"):
-            if filename.endswith(".tmp"):
+            if filename.endswith(".tmp.mp4"):
                 # Do not delete files currently being written
                 continue
             

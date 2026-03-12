@@ -119,7 +119,7 @@ def process_video_task(
                 )
 
             logger.info(f"[{video_id}] Processing video with ffmpeg")
-            temp_output_filepath = output_filepath + ".tmp"
+            temp_output_filepath = output_filepath.replace(".mp4", ".tmp.mp4")
             cmd = [
                 "ffmpeg", "-y",
                 "-i", video_path,
