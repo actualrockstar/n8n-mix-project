@@ -27,11 +27,14 @@ A lightweight, deterministic microservice designed to be called by n8n (or any a
    - Mac: `brew install ffmpeg`
    - Debian/Ubuntu: `sudo apt install ffmpeg`
 
-3. Start the FastAPI server:
+3. Start the FastAPI server (optionally providing environment variables):
    ```bash
-   uvicorn app:app --host 0.0.0.0 --port 8000
+   BASE_URL="https://my-app.example.com" OUTPUT_TTL_HOURS="6" uvicorn app:app --host 0.0.0.0 --port 8000
    ```
    
+## Environment Variables
+- `BASE_URL`: (Optional) The public URL where the `/outputs` directory is served (e.g., `https://my-domain.com`). If set, the API will return a `download_url` for each successful mix.
+- `OUTPUT_TTL_HOURS`: (Optional) The number of hours to keep mixed video files before deleting them (default: `6`).
 ## Docker Setup (Recommended)
 You can deploy this immediately as a standalone Docker container, which bundles `ffmpeg` safely alongside Python.
 
@@ -42,6 +45,8 @@ You can deploy this immediately as a standalone Docker container, which bundles 
 2. Run the image:
    ```bash
    docker run -d -p 8000:8000 \
+     -e BASE_URL="https://my-app.example.com" \
+     -e OUTPUT_TTL_HOURS="6" \
      -v $(pwd)/outputs:/outputs \
      video-mix-service
    ```
@@ -79,6 +84,7 @@ You can deploy this immediately as a standalone Docker container, which bundles 
       "id": "A",
       "keyword": "banana_clip",
       "file_path": "/outputs/banana_clip_A.mp4",
+      "download_url": "https://my-app.example.com/outputs/banana_clip_A.mp4",
       "status": "success",
       "error": null
     },
@@ -86,6 +92,7 @@ You can deploy this immediately as a standalone Docker container, which bundles 
       "id": "C",
       "keyword": "falling_chair",
       "file_path": null,
+      "download_url": null,
       "status": "error",
       "error": "Command failed: ..."
     }

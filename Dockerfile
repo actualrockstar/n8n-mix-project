@@ -19,6 +19,10 @@ COPY app.py processor.py ./
 # Create directories for temp files and outputs
 RUN mkdir -p /outputs /tmp && chmod 777 /outputs /tmp
 
+# Environment variables
+ENV BASE_URL=""
+ENV OUTPUT_TTL_HOURS="6"
+
 # Expose FastAPI default port
 EXPOSE 8000
 
