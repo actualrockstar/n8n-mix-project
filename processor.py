@@ -128,7 +128,7 @@ def process_video_task(
                 "-c:v", "libx264",   # export h264
                 "-c:a", "aac",       # export aac
                 "-ar", "44100",      # normalize sample rate (loudnorm can change it to 96000 Hz)
-                "-shortest",         # ensure output stops when shortest stream stops
+                "-t", str(video_duration),  # explicit duration avoids -shortest deadlock with amix
                 temp_output_filepath
             ]
             run_command(cmd)
