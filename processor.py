@@ -11,8 +11,9 @@ def run_command(cmd, check=True):
     logger.info(f"Running command: {' '.join(cmd)}")
     result = subprocess.run(cmd, stdout=subprocess.PIPE, stderr=subprocess.PIPE, text=True)
     if check and result.returncode != 0:
-        logger.error(f"Command failed: {result.stderr}")
-        raise RuntimeError(f"Command failed: {result.stderr}")
+        stderr_tail = '\n'.join(result.stderr.splitlines()[-15:])
+        logger.error(f"Command failed (last 15 lines):\n{stderr_tail}")
+        raise RuntimeError(f"Command failed:\n{stderr_tail}")
     return result.stdout
 
 def download_media(url: str, output_path: str):
