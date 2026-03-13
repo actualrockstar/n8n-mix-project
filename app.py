@@ -64,21 +64,18 @@ async def mix_videos(request: MixRequest):
     # Run cleanup before/after each mix request
     run_cleanup()
     
-    # Process each video concurrently in separate threads to not block the event loop
-    tasks = []
+    # Process videos sequentially to avoid concurrent ffmpeg deadlocks under CPU pressure
+    results = []
     for video in request.videos:
-        tasks.append(
-            asyncio.to_thread(
-                process_video_task,
-                video.id,
-                video.keyword,
-                video.source_url,
-                request.song_url,
-                request.song_start
-            )
+        result = await asyncio.to_thread(
+            process_video_task,
+            video.id,
+            video.keyword,
+            video.source_url,
+            request.song_url,
+            request.song_start
         )
-    
-    results = await asyncio.gather(*tasks)
+        results.append(result)
     
     processed_results = []
     for res in results:
