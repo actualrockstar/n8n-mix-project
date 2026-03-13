@@ -126,9 +126,9 @@ def process_video_task(
                 "-filter_complex", filter_complex,
                 "-map", "0:v",       # keep original video
                 "-map", "[a_out]",   # use new mixed audio
-                "-c:v", "libx264",   # export h264
+                "-c:v", "copy",      # stream copy video to avoid H264 re-encode deadlock at 1080p
                 "-c:a", "aac",       # export aac
-                "-ar", "44100",      # normalize sample rate (loudnorm can change it to 96000 Hz)
+                "-ar", "44100",      # normalize sample rate
                 "-t", str(video_duration),  # explicit duration avoids -shortest deadlock with amix
                 temp_output_filepath
             ]
