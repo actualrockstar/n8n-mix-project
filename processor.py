@@ -107,15 +107,13 @@ def process_video_task(
                     f"[0:a]volume=0.25[orig_a];"
                     f"[1:a]atrim=start={song_start}:duration={video_duration},asetpts=PTS-STARTPTS,"
                     f"afade=t=out:st={fade_start}:d={fade_duration}[song_a];"
-                    f"[orig_a][song_a]amix=inputs=2:duration=first:dropout_transition=2[mixed_a];"
-                    f"[mixed_a]loudnorm[a_out]"
+                    f"[orig_a][song_a]amix=inputs=2:duration=first:dropout_transition=2[a_out]"
                 )
             else:
                 # No original audio: just use the song
                 filter_complex = (
                     f"[1:a]atrim=start={song_start}:duration={video_duration},asetpts=PTS-STARTPTS,"
-                    f"afade=t=out:st={fade_start}:d={fade_duration}[mixed_a];"
-                    f"[mixed_a]loudnorm[a_out]"
+                    f"afade=t=out:st={fade_start}:d={fade_duration}[a_out]"
                 )
 
             logger.info(f"[{video_id}] Processing video with ffmpeg")
