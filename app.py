@@ -6,7 +6,7 @@ import os
 import time
 from fastapi.staticfiles import StaticFiles
 
-from processor import process_video_task
+from processor import process_video_task, download_video_task
 
 app = FastAPI(title="Video Mix Service")
 
@@ -88,6 +88,31 @@ async def mix_videos(request: MixRequest):
         processed_results.append(res)
         
     return MixResponse(outputs=processed_results)
+
+class DownloadRequest(BaseModel):
+    source_url: str
+    filename: str
+
+class DownloadResponse(BaseModel):
+    id: str
+    download_url: Optional[str] = None
+    status: str
+    error: Optional[str] = None
+
+@app.post("/download", response_model=DownloadResponse)
+async def download_video(request: DownloadRequest):
+    run_cleanup()
+    video_id = str(int(time.time()))
+    result = await asyncio.to_thread(
+        download_video_task,
+        video_id,
+        request.source_url,
+        request.filename,
+    )
+    if result.get("status") == "success" and result.get("file_path") and BASE_URL:
+        result["download_url"] = f"{BASE_URL.rstrip('/')}{result['file_path']}"
+    return DownloadResponse(**result)
+
 
 if __name__ == "__main__":
     import uvicorn

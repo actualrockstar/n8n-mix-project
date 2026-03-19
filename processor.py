@@ -61,6 +61,42 @@ def has_audio(file_path: str) -> bool:
     output = run_command(cmd, check=False)
     return "audio" in output.strip()
 
+def download_video_task(
+    video_id: str,
+    source_url: str,
+    filename: str,
+    output_dir: str = "/outputs",
+    tmp_dir: str = "/tmp"
+) -> dict:
+    os.makedirs(output_dir, exist_ok=True)
+    os.makedirs(tmp_dir, exist_ok=True)
+
+    with tempfile.TemporaryDirectory(dir=tmp_dir) as temp_dir:
+        temp_path = os.path.join(temp_dir, f"download_{video_id}.mp4")
+        try:
+            logger.info(f"[{video_id}] Downloading video from {source_url}")
+            download_media(source_url, temp_path)
+
+            safe_filename = "".join(c if c.isalnum() or c in "-_" else "_" for c in filename)
+            output_filename = f"{safe_filename}_{video_id}.mp4"
+            output_filepath = os.path.join(output_dir, output_filename)
+
+            os.rename(temp_path, output_filepath)
+            logger.info(f"[{video_id}] Download finished. Output: {output_filepath}")
+            return {
+                "id": video_id,
+                "file_path": output_filepath,
+                "status": "success"
+            }
+        except Exception as e:
+            logger.error(f"[{video_id}] Download failed: {str(e)}")
+            return {
+                "id": video_id,
+                "status": "error",
+                "error": str(e)
+            }
+
+
 def process_video_task(
     video_id: str,
     keyword: str,
