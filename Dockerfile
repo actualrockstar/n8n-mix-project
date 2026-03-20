@@ -4,7 +4,7 @@ FROM python:3.10-slim
 # ffmpeg for media processing
 # curl for potential download operations or health checks
 RUN apt-get update && \
-    apt-get install -y ffmpeg curl && \
+    apt-get install -y ffmpeg curl nodejs && \
     rm -rf /var/lib/apt/lists/*
 
 WORKDIR /app

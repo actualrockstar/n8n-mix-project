@@ -24,7 +24,6 @@ def download_media(url: str, output_path: str):
     if url.startswith("http://") or url.startswith("https://"):
         cmd = [
             "yt-dlp",
-            "-f", "best",
             "-o", output_path,
             url
         ]
